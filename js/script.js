@@ -4,6 +4,8 @@ const repoList = document.querySelector(".repo-list");
 const repoClass = document.querySelector(".repos");
 const individualRepoData = document.querySelector(".repo-data");
 const username = "amidona";
+const viewReposButton = document.querySelector(".view-repos");
+const filterInput = document.querySelector(".filter-repos");
 
 //function to grab data from GitHub profile
 const getUserData = async function () {
@@ -15,8 +17,10 @@ const getUserData = async function () {
 
 getUserData();
 
+//function to display user info
 const displayUserInfo = function (userData) {
     const userInfo = document.createElement("div");
+    userInfo.classList.add("user-info");
     userInfo.innerHTML = `
     <figure>
       <img alt="user avatar" src=${userData.avatar_url} />
@@ -40,15 +44,18 @@ const getRepoData = async function () {
     displayRepoData(repoData);
 };
 
+//function to display list of repos
 const displayRepoData = function (repos) {
+    filterInput.classList.remove("hide");
     for (const repo of repos) {
         const li = document.createElement("li");
-        li.classList.add(".repo");
+        li.classList.add("repo");
         li.innerHTML = `<h3>${repo.name}</h3>`;
         repoList.append(li);
     }
 };
 
+//event listener to show individual repo info
 repoList.addEventListener("click", function (e) {
     if (e.target.matches("h3")) {
         const repoName = e.target.innerText;
@@ -85,4 +92,28 @@ const displayRepoInfo = function (repoInfo, languages) {
     individualRepoData.append(repoInfoDiv);
     individualRepoData.classList.remove("hide");
     repoClass.classList.add("hide");
+    viewReposButton.classList.remove("hide");
 };
+
+//click event for the back button
+viewReposButton.addEventListener("click", function () {
+    repoClass.classList.remove("hide");
+    individualRepoData.classList.add("hide");
+    viewReposButton.classList.add("hide");
+});
+
+//input event to run the search box
+filterInput.addEventListener("input", function (e) {
+    const searchText = e.target.value;
+    //console.log(searchText);
+    const repos = document.querySelectorAll(".repo");
+    const lowerSearchText = searchText.toLowerCase();
+    for (const repo of repos) {
+        const lowerTitle = repo.innerText.toLowerCase();
+        if (lowerTitle.includes(lowerSearchText)) {
+            repo.classList.remove("hide");
+        } else {
+            repo.classList.add("hide");
+        }
+    };
+})
